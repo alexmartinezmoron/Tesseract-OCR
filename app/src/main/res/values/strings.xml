@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Tesseract OCR</string>
+    <string name="select_image">Seleccionar Imagen</string>
+    <string name="selected_image">Imagen seleccionada</string>
+    <string name="result_placeholder">El texto extraído aparecerá aquí…</string>
+    <string name="status_ready">Listo para procesar imagen</string>
+    <string name="status_processing">Procesando imagen…</string>
+    <string name="status_complete">Procesamiento completado</string>
+    <string name="error_no_image">No se pudo cargar la imagen</string>
+    <string name="error_ocr_failed">Error al procesar la imagen</string>
+    <string name="error_init_failed">Error al inicializar Tesseract</string>
+    <string name="permission_required">Se requiere permiso para acceder a imágenes</string>
+</resources>
