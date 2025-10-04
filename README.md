@@ -102,8 +102,16 @@ La aplicación solicita los permisos necesarios según la versión de Android:
 
 ### Mejorar la precisión
 - Usar imágenes de alta calidad con buen contraste
-- Preprocesar imágenes (escala de grises, ajuste de contraste)
+- Tomar fotos con buena iluminación, sin sombras
+- La app ya incluye preprocesamiento automático (escala de grises, ajuste de contraste, umbral adaptativo)
 - Usar modelos de lenguaje actualizados
+
+### Optimizaciones para tickets fotografiados
+La aplicación incluye preprocesamiento automático optimizado para tickets:
+- **Conversión a escala de grises**: Normaliza variaciones de color
+- **Ajuste de contraste**: Mejora la legibilidad del texto
+- **Umbral adaptativo**: Maneja iluminación irregular en fotografías
+- **Modo de segmentación PSM_SINGLE_BLOCK**: Optimizado para documentos como tickets
 
 ## Solución de Problemas
 
@@ -111,10 +119,12 @@ La aplicación solicita los permisos necesarios según la versión de Android:
 - Verificar que el archivo `spa.traineddata` esté en `assets/tessdata/`
 - Comprobar que hay suficiente espacio de almacenamiento
 
-### No se detecta texto
+### No se detecta texto o falta texto
 - Asegurarse de que la imagen tiene texto legible
 - Verificar que el texto está en español
 - Intentar con una imagen de mayor calidad
+- Para tickets fotografiados: tomar la foto con buena iluminación, sin sombras ni reflejos
+- La aplicación ahora incluye preprocesamiento automático para mejorar el reconocimiento
 
 ### Problemas de permisos
 - Verificar que los permisos están declarados en `AndroidManifest.xml`

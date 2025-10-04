@@ -147,10 +147,9 @@ public class MainActivity extends AppCompatActivity {
             tessBaseAPI = new TessBaseAPI();
             tessBaseAPI.init(dataPath, "spa");
 
-            // Configuración optimizada para tickets
-            tessBaseAPI.setPageSegMode(TessBaseAPI.PageSegMode.PSM_AUTO);
-            tessBaseAPI.setVariable(TessBaseAPI.VAR_CHAR_WHITELIST,
-                    "ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyzáéíóúÁÉÍÓÚ0123456789.,€$:-/ ");
+            // Configuración optimizada para tickets fotografiados
+            // PSM_SINGLE_BLOCK funciona mejor para tickets que PSM_AUTO
+            tessBaseAPI.setPageSegMode(TessBaseAPI.PageSegMode.PSM_SINGLE_BLOCK);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -339,20 +338,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private Bitmap preprocessTicketImage(Bitmap bitmap) {
-        // Redimensionar si es muy grande
+        // Redimensionar si es muy grande para mejorar velocidad
         bitmap = resizeIfNeeded(bitmap);
 
-        // Convertir a escala de grises (aunque sea B&N)
-        //bitmap = toGrayscale(bitmap);
+        // Convertir a escala de grises para normalizar colores
+        bitmap = toGrayscale(bitmap);
 
-        // Aplicar desenfoque gaussiano para suavizar arrugas
-        //bitmap = applyGaussianBlur(bitmap);
+        // Aumentar contraste para mejorar legibilidad
+        bitmap = adjustContrast(bitmap, 1.5f);
 
-        // Aumentar contraste
-        bitmap = adjustContrast(bitmap, 1f);
-
-        // Aplicar umbral adaptativo (mejor para arrugas)
-        //bitmap = applyAdaptiveThreshold(bitmap);
+        // Aplicar umbral adaptativo para manejar iluminación irregular en fotos
+        bitmap = applyAdaptiveThreshold(bitmap);
 
         return bitmap;
     }
