@@ -139,6 +139,13 @@ Android Studio automáticamente sincronizará las dependencias de Gradle. Si no 
 - Prueba con una imagen de mejor calidad
 - Asegúrate que el texto esté en **español**
 - Verifica que el archivo `spa.traineddata` esté en `app/src/main/assets/tessdata/`
+- Para tickets fotografiados: asegúrate de tomar la foto con buena iluminación y sin sombras
+
+**Mejoras recientes para tickets fotografiados**:
+- La app ahora preprocesa automáticamente las imágenes
+- Convierte a escala de grises y ajusta el contraste
+- Aplica umbral adaptativo para manejar iluminación irregular
+- Usa modo de segmentación optimizado para tickets
 
 ### La app se cierra inesperadamente
 
