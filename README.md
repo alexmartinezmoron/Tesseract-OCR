@@ -18,13 +18,32 @@ Proyecto Android mínimo que demuestra la integración de OCR (Reconocimiento Ó
 
 ## Estructura del Proyecto
 
+Este proyecto utiliza **Clean Architecture** para separar las responsabilidades en capas claras:
+
 ```
 Tesseract-OCR/
 ├── app/
 │   ├── src/
 │   │   └── main/
 │   │       ├── java/com/example/tesseractocr/
-│   │       │   └── MainActivity.java          # Actividad principal con lógica OCR
+│   │       │   ├── MainActivity.java          # Actividad principal (Presentación)
+│   │       │   ├── presentation/              # Capa de Presentación (UI)
+│   │       │   │   └── ImagePickerHandler.java
+│   │       │   ├── domain/                    # Capa de Dominio (Lógica de Negocio)
+│   │       │   │   ├── models/
+│   │       │   │   │   └── OcrResult.java
+│   │       │   │   └── usecases/
+│   │       │   │       ├── ProcessImageUseCase.java
+│   │       │   │       ├── PreprocessImageUseCase.java
+│   │       │   │       └── RecognizeTextUseCase.java
+│   │       │   └── data/                      # Capa de Datos (Implementaciones)
+│   │       │       ├── repository/
+│   │       │       │   └── TesseractRepository.java
+│   │       │       ├── preprocessing/
+│   │       │       │   ├── ImagePreprocessor.java
+│   │       │       │   └── ImageLoader.java
+│   │       │       └── ocr/
+│   │       │           └── TesseractOcrEngine.java
 │   │       ├── res/
 │   │       │   ├── layout/
 │   │       │   │   └── activity_main.xml      # Diseño de la interfaz
@@ -37,8 +56,16 @@ Tesseract-OCR/
 │   └── build.gradle                           # Configuración de dependencias
 ├── build.gradle                               # Configuración del proyecto
 ├── settings.gradle                            # Configuración de módulos
+├── CLEAN_ARCHITECTURE.md                      # Documentación de la arquitectura
+├── ARCHITECTURE_DIAGRAM.md                    # Diagramas de la arquitectura
+├── MIGRATION_GUIDE.md                         # Guía de migración
 └── README.md                                  # Este archivo
 ```
+
+📚 **Documentación de Arquitectura:**
+- [CLEAN_ARCHITECTURE.md](CLEAN_ARCHITECTURE.md) - Explicación detallada de la arquitectura
+- [ARCHITECTURE_DIAGRAM.md](ARCHITECTURE_DIAGRAM.md) - Diagramas visuales
+- [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) - Guía de migración y ejemplos
 
 ## Instalación
 
@@ -90,20 +117,58 @@ La aplicación solicita los permisos necesarios según la versión de Android:
 - La instancia de TessBaseAPI se libera correctamente en `onDestroy()`
 - El modelo de lenguaje se almacena en el directorio privado de la app
 
+## Arquitectura Clean
+
+El proyecto está estructurado en **tres capas principales**:
+
+1. **Presentación** (`presentation/` + `MainActivity`): Maneja la UI y las interacciones del usuario
+2. **Dominio** (`domain/`): Contiene la lógica de negocio y casos de uso
+3. **Datos** (`data/`): Implementa las interfaces y gestiona fuentes de datos
+
+### Beneficios de esta arquitectura:
+- ✅ **Separación de responsabilidades**: Cada capa tiene un propósito claro
+- ✅ **Testeable**: Fácil probar cada componente de forma independiente
+- ✅ **Mantenible**: Cambios en una capa no afectan a las demás
+- ✅ **Extensible**: Fácil agregar nuevos motores OCR (ML Kit, etc.)
+
 ## Modificaciones y Extensiones
+
+### Agregar ML Kit como motor OCR
+Gracias a Clean Architecture, agregar ML Kit es simple:
+
+1. Crear `MLKitOcrEngine.java` implementando `RecognizeTextUseCase`
+2. Cambiar la inyección de dependencia en `MainActivity`:
+   ```java
+   RecognizeTextUseCase recognizeTextUseCase = new MLKitOcrEngine();
+   ```
+3. ¡Listo! No se requieren cambios en UI ni casos de uso
+
+Ver [CLEAN_ARCHITECTURE.md](CLEAN_ARCHITECTURE.md#how-to-add-ml-kit-future-enhancement) para más detalles.
 
 ### Agregar otros idiomas
 1. Descargar el archivo `.traineddata` del idioma deseado de [tessdata](https://github.com/tesseract-ocr/tessdata)
 2. Colocarlo en `app/src/main/assets/tessdata/`
-3. Modificar el código en `MainActivity.java` para usar el nuevo idioma:
+3. Modificar `TesseractRepository.java` para usar el nuevo idioma:
    ```java
-   tessBaseAPI.init(dataPath, "eng"); // Para inglés
+   private static final String LANGUAGE = "eng"; // Para inglés
    ```
 
-### Mejorar la precisión
-- Usar imágenes de alta calidad con buen contraste
-- Preprocesar imágenes (escala de grises, ajuste de contraste)
-- Usar modelos de lenguaje actualizados
+### Mejorar el preprocesamiento de imágenes
+1. Editar `ImagePreprocessor.java` en la capa de datos
+2. Agregar o modificar algoritmos de preprocesamiento
+3. No se requieren cambios en otras capas
+
+Ejemplo:
+```java
+@Override
+public Bitmap execute(Bitmap bitmap) {
+    bitmap = resizeIfNeeded(bitmap);
+    bitmap = toGrayscale(bitmap);      // Activar escala de grises
+    bitmap = applyGaussianBlur(bitmap); // Activar blur
+    bitmap = adjustContrast(bitmap, 1.2f); // Más contraste
+    return bitmap;
+}
+```
 
 ## Solución de Problemas
 
